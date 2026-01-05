@@ -45,3 +45,29 @@ const myFunction = function(){
 console.log(typeof myObj);
 
 // https://262.ecma-international.org/5.1/#sec-11.4.3
+
+
+// ****************************************** //
+
+// Memory 
+
+// Static (Primitive) // Heap (Non Primitive)
+
+let myUserId = 1234
+
+let anotherUserId = myUserId
+anotherUserId = 4321
+
+console.log(myUserId);
+console.log(anotherUserId);
+
+let userOne = {
+    Email : "xyz@gmail.com",
+    password: "1234"
+}
+
+let userTwo = userOne
+userTwo.Email = "abc@outlook.com" // using this way we can change the value of the object
+
+console.log(userOne.Email);
+console.log(userTwo.Email);
