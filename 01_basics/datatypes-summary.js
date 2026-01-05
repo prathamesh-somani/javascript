@@ -51,7 +51,7 @@ console.log(typeof myObj);
 
 // Memory 
 
-// Static (Primitive) // Heap (Non Primitive)
+// Stack (Primitive) // Heap (Non Primitive)
 
 let myUserId = 1234
 
