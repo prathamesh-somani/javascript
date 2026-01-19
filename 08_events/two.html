@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Async Project</title>
+</head>
+<body style="background-color: grey;">
+    <h1>Prathamesh Somani</h1>
+    <button id ="stop">Stop</button>
+</body>
+<script>
+    
+    const test = function (){
+        console.log("Prathamesh")
+    }
+
+    const changeText = function (){
+        document.querySelector("h1").innerHTML = "Hello Prathamesh"
+    }
+
+    const ChangeMe = setTimeout(changeText,2000)
+
+    // clearTimeout(ChangeMe)
+
+    document.querySelector("#stop").addEventListener('click',function(){
+        clearTimeout(ChangeMe)
+        console.log("Stopped")
+    })
+    
+    // setTimeout(function (){
+        // console.log ("Prathamesh");
+    // },2000)   //It's a method that also calls API (WEB API).
+
+// Basically SetTimeout is like u asked the script to give me a t time and exceute after the t time.
+
+
+// clearTimeout is used to stop the setTimeout
+
+</script>
+</html>
