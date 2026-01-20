@@ -1,0 +1,351 @@
+Skip to content
+
+You said:
+function createUser (username,score){
+    this.username = username
+    this.score = score
+}
+
+
+createUser.prototype.increment = function (){
+    this.score++
+};
+
+createUser.prototype.printme = function (){
+    console.log(score is ${this.score});
+    
+}
+const user1 =new createUser("Prathamesh","20")
+const user2 = new createUser("Manish","50")
+
+user1.printme()
+
+
+why score was not increased?
+ChatGPT said:
+Two separate things are happening in your code 👇
+
+1️⃣ You never call increment()
+You defined the method:
+
+createUser.prototype.increment = function (){
+    this.score++
+};
+…but you never call it.
+
+You only call:
+
+user1.printme()
+So the score stays the same.
+
+✅ You must call:
+
+user1.increment()
+user1.printme()
+2️⃣ Your score is a string, not a number
+Here:
+
+const user1 = new createUser("Prathamesh", "20")
+"20" is a string, not a number.
+
+JavaScript will still try to convert it when using ++, but this is bad practice and can cause bugs later.
+
+✅ Better:
+
+const user1 = new createUser("Prathamesh", 20)
+✅ Corrected Working Code
+function createUser(username, score) {
+    this.username = username
+    this.score = score
+}
+
+createUser.prototype.increment = function () {
+    this.score++
+};
+
+createUser.prototype.printme = function () {
+    console.log(`score is ${this.score}`);
+}
+
+const user1 = new createUser("Prathamesh", 20)
+
+user1.increment()
+user1.printme()
+Output:
+score is 21
+🧠 Key Takeaways
+Defining a method ≠ calling a method
+
+Always store numeric values as numbers, not strings
+
+Prototype methods work correctly here 👍
+
+If you want, I can also explain how prototype works internally or how this differs from ES6 classes.
+
+You said:
+let myHeroes = ["thor","spiderman"]
+
+let heroPowers = {
+    thor : "hammer",
+    spiderman : "web-shooter",
+
+    getSpiderManPower : function (){
+        console.log(Spidey Powers are ${this.spiderman});
+        
+    } 
+}
+
+Object.prototype.prathamesh = function(){
+    console.log(Prathamesh is present in all objects);
+    
+}
+
+// heroPowers.getSpiderManPower()
+heroPowers.prathamesh()
+myHeroes.prathamesh()
+
+what exactly ahppened here?
+
+ChatGPT said:
+Great question — this goes straight into JavaScript’s prototype chain 🔥
+Let’s walk through exactly what happened, step by step.
+
+1️⃣ What you added
+Object.prototype.prathamesh = function(){
+    console.log(`Prathamesh is present in all objects`);
+}
+This line is the key.
+
+🔹 Meaning:
+You added a method called prathamesh() to Object.prototype.
+
+👉 In JavaScript, almost everything is an object, and
+👉 all objects inherit from Object.prototype (directly or indirectly).
+
+2️⃣ Why heroPowers.prathamesh() works
+heroPowers.prathamesh()
+Prototype lookup:
+JavaScript looks for prathamesh in this order:
+
+heroPowers
+   ↓
+Object.prototype  ← FOUND HERE
+   ↓
+null
+Since heroPowers is a plain object, it directly inherits from Object.prototype.
+
+✅ Method found → executed.
+
+3️⃣ Why myHeroes.prathamesh() ALSO works
+let myHeroes = ["thor","spiderman"]
+myHeroes.prathamesh()
+This is where it gets interesting.
+
+Arrays are objects too!
+Prototype chain of an array:
+
+myHeroes
+   ↓
+Array.prototype
+   ↓
+Object.prototype  ← FOUND HERE
+   ↓
+null
+Since:
+
+Array.prototype does not have prathamesh
+
+JavaScript keeps searching up the chain
+
+It finds prathamesh on Object.prototype
+
+✅ Method found → executed.
+
+4️⃣ Why this is powerful (and dangerous ⚠️)
+You effectively did this:
+
+EVERY object in JavaScript now has prathamesh()
+That includes:
+
+Objects {}
+
+Arrays []
+
+Functions
+
+Dates
+
+DOM objects
+
+Example:
+function test(){}
+test.prathamesh()
+
+new Date().prathamesh()
+😱 All will work.
+
+5️⃣ Visual Summary (Prototype Chain)
+heroPowers → Object.prototype → null
+
+myHeroes → Array.prototype → Object.prototype → null
+6️⃣ Why this is usually a BAD idea in real projects
+Modifying Object.prototype can:
+
+Break third-party libraries
+
+Cause unexpected behavior in loops (for...in)
+
+Create hard-to-debug bugs
+
+❌ Avoid in production code
+✅ Use only for learning or polyfills (carefully)
+7️⃣ Safer alternative (if needed)
+If you want this only for arrays:
+
+Array.prototype.prathamesh = function(){
+    console.log("Only arrays have this");
+}
+Now:
+
+myHeroes.prathamesh() // ✅
+heroPowers.prathamesh() // ❌
+🧠 Final Takeaway
+JavaScript uses prototype chaining
+
+Object.prototype is at the top
+
+Adding to it affects everything
+
+Method lookup travels upward until found or null
+
+If you want, I can next explain:
+
+__proto__ vs prototype
+
+How class uses prototypes internally
+
+Why for...in behaves strangely here
+
+Just say 👍
+
+You said:
+__proto__ vs prototype
+ChatGPT said:
+This is one of the most important JS internals to understand.
+I’ll keep it clear, precise, and visual.
+
+🧠 Short Answer (One-liner)
+prototype → property of a constructor function
+
+__proto__ → property of an object instance
+
+They point to the same thing, but from different sides.
+
+1️⃣ prototype (Constructor side)
+function User(name) {
+    this.name = name
+}
+Every function in JS has a prototype property:
+
+User.prototype.sayHello = function () {
+    console.log("Hello");
+}
+🔹 Purpose:
+prototype is used to define methods & properties that should be shared by all instances.
+
+2️⃣ __proto__ (Instance side)
+const u1 = new User("Prathamesh")
+Every object instance has an internal link called [[Prototype]], exposed as:
+
+u1.__proto__
+🔹 Purpose:
+__proto__ points to the object from which this object inherits.
+
+3️⃣ The Critical Connection (MOST IMPORTANT)
+u1.__proto__ === User.prototype   // ✅ true
+📌 This is the entire magic of JS inheritance.
+
+4️⃣ Visual Diagram
+User (constructor function)
+   |
+   |  prototype
+   v
+User.prototype
+   ^
+   |  __proto__
+   |
+u1 (instance)
+5️⃣ Property Lookup (How JS finds methods)
+u1.sayHello()
+JS searches like this:
+
+u1
+ ↓
+u1.__proto__ (User.prototype)  ← FOUND
+ ↓
+Object.prototype
+ ↓
+null
+6️⃣ Example Side-by-Side
+function Car(model) {
+    this.model = model
+}
+
+Car.prototype.drive = function () {
+    console.log("Driving");
+}
+
+const c1 = new Car("BMW")
+
+c1.drive()
+Internally:
+c1.__proto__ === Car.prototype       // true
+Car.prototype.__proto__ === Object.prototype
+7️⃣ __proto__ is legacy ⚠️
+__proto__ is non-standard legacy syntax
+
+Modern JS uses:
+
+Object.getPrototypeOf(c1)
+Object.setPrototypeOf(c1, Car.prototype)
+But for learning, __proto__ is totally fine.
+
+8️⃣ What about class?
+class User {
+    sayHello() {
+        console.log("Hello");
+    }
+}
+Behind the scenes:
+
+User.prototype.sayHello = function () {}
+⚠️ class is just syntactic sugar over prototypes.
+
+9️⃣ Key Differences Table
+Feature	prototype	__proto__
+Belongs to	Constructor function	Object instance
+Used for	Defining shared methods	Linking inheritance
+Exists on	Functions	Objects
+Standard	✅ Yes	⚠️ Legacy
+Direction	Parent → child	Child → parent
+🧠 Final Mental Model
+prototype is what you WANT instances to inherit
+__proto__ is HOW they actually inherit it
+
+If you want next:
+
+Prototype chain interview questions
+
+Why arrow functions don’t have prototype
+
+Object.create() vs new
+
+hasOwnProperty() vs prototype properties
+
+Just tell me 🚀
+
+
+
+
+No file chosenNo file chosen
+ChatGPT can make mistakes. Check important info. See Cookie Preferences.
